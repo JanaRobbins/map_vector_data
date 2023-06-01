@@ -3,7 +3,7 @@ import geopandas as gpd
 import matplotlib.pyplot as plt
 from cartopy.feature import ShapelyFeature
 import cartopy.crs as ccrs
-import matplotlip.patches as mpatches
+import matplotlib.patches as mpatches
 import matplotlib.lines as mlines
 
 def generate_handles(labels, color, edge='k', alpha=1):
