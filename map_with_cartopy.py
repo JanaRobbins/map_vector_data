@@ -6,10 +6,10 @@ import cartopy.crs as ccrs
 import matplotlib.patches as mpatches
 import matplotlib.lines as mlines
 
-def generate_handles(labels, color, edge='k', alpha=1):
+def generate_handles(labels, colors, edge='k', alpha=1):
     lc=len(colors)
     handles=[]
-    for i in range(len(lables)):
+    for i in range(len(labels)):
         handles.append(mpatches.Rectangle((0,0),1,1,facecolor=colors[i % lc], edgecolor=edge, alpha=alpha))
         return handles
 
@@ -111,8 +111,26 @@ water_handle = generate_handles(['Lakes'], ['royalblue'])
 # note: if you change the color you use to display rivers, you'll want to change it here, too
 river_handle = [mlines.Line2D([], [], color='royalblue')]
 
+nice_names = [name.title() for name in county_names]
 
-plt.show()
+handles = county_handles + water_handle + river_handle + town_handle # use '+' to concatenate (combine) lists
+labels = nice_names + ['Lakes', 'Rivers', 'Towns']
 
+leg = ax.legend(handles, labels, title='Legend', title_fontsize=12,
+                 fontsize=10, loc='upper left', frameon=True, framealpha=1)
 
+gridlines = ax.gridlines(draw_labels=True, # draw  labels for the grid lines
+                         xlocs=[-8, -7.5, -7, -6.5, -6, -5.5], # add longitude lines at 0.5 deg intervals
+                         ylocs=[54, 54.5, 55, 55.5]) # add latitude lines at 0.5 deg intervals
+gridlines.left_labels = False # turn off the left-side labels
+gridlines.bottom_labels = False # turn off the bottom labels
 
+for ind, row in towns.iterrows(): # towns.iterrows() returns the index and row
+    x, y = row.geometry.x, row.geometry.y # get the x,y location for each town
+    ax.text(x, y, row['TOWN_NAME'].title(), fontsize=7, transform=myCRS) # use plt.text to place a label at x,y
+
+scale_bar(ax)
+
+myFig.savefig('map.png', bbox_inches='tight', dpi=200)
+
+#plt.show()
